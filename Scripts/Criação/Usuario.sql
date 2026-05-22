@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS usuario (
+    id_usuario SERIAL PRIMARY KEY,
+    nome VARCHAR(50) NOT NULL,
+    sobrenome VARCHAR(50) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    senha VARCHAR(255) NOT NULL,
+    tipo_usuario VARCHAR(20) NOT NULL,
+    data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

@@ -10,4 +10,4 @@ CREATE TABLE IF NOT EXISTS atividade (
     carga_horaria INT NOT NULL,
     id_evento INT NOT NULL,
     FOREIGN KEY (id_evento) REFERENCES evento(id_evento) ON DELETE CASCADE
-);
+); 

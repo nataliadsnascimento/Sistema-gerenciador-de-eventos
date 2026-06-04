@@ -1,0 +1,6 @@
+INSERT INTO atividade (nome_atividade, descricao, data, hora_inicio, hora_fim, local, capacidade, carga_horaria, id_evento) VALUES
+('Palestra Magna: O impacto do GPT-5 no mercado', 'Abertura oficial discutindo as novas fronteiras da IA.', '2026-05-18', '09:00:00', '11:00:00', 'Teatro Principal', 400, 2, 1),
+('Curso Intensivo: Arquitetura de Microsserviços', 'Prática hands-on desenhando sistemas resilientes baseados em nuvem.', '2026-05-19', '13:00:00', '17:00:00', 'Laboratório 03', 40, 4, 1),
+('Palestra: Machine Learning na Prática Médica', 'Casos reais de identificação precoce de patologias com uso de IA.', '2026-05-20', '10:00:00', '12:00:00', 'Anfiteatro B', 120, 2, 1),
+('Sessão Oral: Engenharia e Ciências Exatas', 'Apresentações dos resumos submetidos pelos alunos de graduação.', '2026-08-11', '09:00:00', '12:00:00', 'Sala de Videoconferência', 60, 3, 2),
+('Curso Rápido: Pitch Perfeito para Investidores', 'Desenvolvimento de apresentações rápidas e impactantes para captação de recursos.', '2026-10-05', '15:00:00', '18:00:00', 'Mini Auditório', 40, 3, 3);

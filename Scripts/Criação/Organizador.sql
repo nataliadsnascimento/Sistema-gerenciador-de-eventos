@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS organizador (
-    id_usuario INT PRIMARY KEY,
+    id_usuario SERIAL PRIMARY KEY,
     departamento VARCHAR(100),
     cargo VARCHAR(100),
     curso VARCHAR(100),

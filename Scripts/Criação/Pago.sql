@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS pago (
-    id_pagamento INT PRIMARY KEY,
+    id_pagamento SERIAL PRIMARY KEY,
     valor DECIMAL(10, 2) NOT NULL,
     opcao_pagamento VARCHAR(50) NOT NULL,
     data_vencimento DATE NOT NULL,

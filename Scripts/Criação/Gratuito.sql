@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS gratuito (
-    id_pagamento INT PRIMARY KEY,
+    id_pagamento SERIAL PRIMARY KEY,
     cota_social BOOLEAN NOT NULL,
     motivo_isencao TEXT,
     comprovante_isencao VARCHAR(255),

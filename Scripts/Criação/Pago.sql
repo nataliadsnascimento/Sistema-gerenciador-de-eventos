@@ -5,3 +5,4 @@ CREATE TABLE IF NOT EXISTS pago (
     data_vencimento DATE NOT NULL,
     comprovante VARCHAR(255),
     FOREIGN KEY (id_pagamento) REFERENCES pagamento(id_pagamento) ON DELETE CASCADE
+);

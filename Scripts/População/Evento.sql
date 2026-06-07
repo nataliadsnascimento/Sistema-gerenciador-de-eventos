@@ -1,5 +1,0 @@
-insert into evento(titulo_evento, descricao, data_inicio, data_fim, local, carga_horaria_evento, vagas_totais, status_evento, data_criacao, id_categoria)
-values
-('TechWeek 2026', 'Grande semana tecnológica com foco em Inteligência Artificial e Desenvolvimento Web', '2026-05-18 08:00:00-03', '2026-05-22 18:00:00-03', 'Bloco A - Campus Central', 40, 500, 'Inscrições Abertas', 2026, 1),
-('Simpósio de Pesquisa e Extenssão', 'Apresentação de artigos científicos e projetos extencionistas dos alunos', '2026-08-10 09:00:00-03', '2026-08-12 17:00:00-03', 'Pavilhão Academico F', 24, 300, 'Planejamento', 2026, 2),
-('Workshop: Startup Real', 'Aprenda a transformar a sua ideia academica em um negócio de sucesso', '2026-10-05 14:00:00-03', '2026-10-06 18:00:00-03', 'Auditório de Negócios', 8, 100, 'Planejamento', 2026, 3);

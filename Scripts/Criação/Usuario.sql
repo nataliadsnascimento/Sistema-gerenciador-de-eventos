@@ -7,3 +7,4 @@ CREATE TABLE IF NOT EXISTS usuario (
     tipo_usuario VARCHAR(20) NOT NULL,
     data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+

@@ -18,3 +18,12 @@ CREATE TRIGGER tg_antes_inscrever_participante
 BEFORE INSERT ON inscricao
 FOR EACH ROW
 EXECUTE FUNCTION fn_verificar_capacidade_atividade();
+
+
+DROP TRIGGER IF EXISTS trg_validar_datas_evento ON evento;
+
+
+CREATE TRIGGER trg_validar_datas_evento
+BEFORE INSERT OR UPDATE ON evento
+FOR EACH ROW
+EXECUTE FUNCTION fn_validar_datas_evento();

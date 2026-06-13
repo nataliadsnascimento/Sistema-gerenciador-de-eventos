@@ -51,3 +51,17 @@ join pago on pago.id_pagamento = pag.id_pagamento
 where ins.status = 'Confirmada'
 group by evento.id_evento, evento.titulo_evento
 order by total_arrecadado desc;
+
+create or replace view perfil_de_usuario as 
+select
+	usuario.id_usuario,
+	usuario.nome || ' ' || usuario.sobrenome as nome_completo,
+	usuario.email,
+	usuario.tipo_usuario as papel_principal,
+	case when organizador.id_usuario is not null then 'Sim' else 'Não' end as eh_organizador,
+	case when participante.id_usuario is not null then 'Sim' else 'Não' end as eh_participante,
+	case when palestrante.id_usuario is not null then 'Sim' else 'Não' end as eh_palestrante
+from usuario 
+left join organizador on usuario.id_usuario = organizador.id_usuario
+left join participante on usuario.id_usuario = participante.id_usuario
+left join palestrante on usuario.id_usuario = palestrante.id_usuario

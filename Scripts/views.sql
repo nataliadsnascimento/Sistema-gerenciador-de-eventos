@@ -9,7 +9,6 @@ FROM atividade a
 LEFT JOIN inscricao i ON i.id_atividade = a.id_atividade AND i.status = 'Confirmada'
 GROUP BY a.id_atividade, a.nome_atividade, a.capacidade;
 
-
 CREATE OR REPLACE VIEW view_cronograma_atividades AS
 SELECT
 	e.titulo_evento AS evento,

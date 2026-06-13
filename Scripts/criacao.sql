@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS usuario_telefone (
 CREATE TABLE IF NOT EXISTS participante (
     id_usuario INT PRIMARY KEY, 
     matricula VARCHAR(50),
-    institicao VARCHAR(150),
+    instituicao VARCHAR(150),
     FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE
 );
 

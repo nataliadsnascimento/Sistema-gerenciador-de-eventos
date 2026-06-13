@@ -35,4 +35,19 @@ JOIN categoria_evento c_ev ON e.id_categoria = c_ev.id_categoria
 LEFT JOIN palestra p ON a.id_atividade = p.id_atividade
 LEFT JOIN curso c ON a.id_atividade = c.id_atividade
 ORDER BY a.data ASC, a.hora_inicio ASC;
-	
+
+
+create or replace view arrecadacao_evento as 
+select
+	evento.id_evento,
+	evento.titulo_evento as evento,
+	count(pago.id_pagamento) as qtd_incricoes_pagas,
+	coalesce(sum(pago.valor), 0.00) as total_arrecadado	
+from evento  
+join atividade ativ on ativ.id_evento = evento.id_evento
+join inscricao ins on ins.id_atividade = ativ.id_atividade
+join pagamento pag on pag.id_inscricao = ins.id_inscricao 
+join pago on pago.id_pagamento = pag.id_pagamento
+where ins.status = 'Confirmada'
+group by evento.id_evento, evento.titulo_evento
+order by total_arrecadado desc;

@@ -134,3 +134,29 @@ begin
 	raise notice 'Inscrição % cancelada com sucesso. A vaga está liberada', p_id_inscricao;
 end;
 $$;
+
+create or replace procedure encerrar_inscricoes_evento(
+	p_id_evento int
+)
+language plpgsql as $$ 
+declare
+	vagas_canceladas int;
+begin
+	update evento
+	set status_evento = 'Inscrições encerradas'
+	where id_evento = encerrar_inscricoes_evento.p_id_evento;
+	
+	if not found then
+		raise exception 'Evento com ID % não encontrado', p_id_evento;
+	end if;
+	
+	update inscricao 
+	set status = 'Cancelada'
+	where status = 'Pendente'
+		and id_atividade in (select id_atividade from atividade where id_evento = encerrar_inscricoes_evento.p_id_evento);
+	
+	get diagnostics vagas_canceladas = row_count;
+	
+	raise notice 'Inscrições do evento % encerradas. Total de % inscrições pendentes que foram canceladas', p_id_evento, vagas_canceladas;
+end;
+$$;

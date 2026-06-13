@@ -104,3 +104,33 @@ exception
 		raise exception 'Erro inesperado ao cadastrar palestrante: %', sqlerrm;
 end;
 $$;
+
+create or replace procedure cancelar_inscricao(
+	p_id_inscricao int
+)
+language plpgsql as $$ 
+declare 
+	status_atual varchar(50);
+begin
+	select status into status_atual from inscricao where id_inscricao = p_id_inscricao;
+	
+	if not found then 
+		raise exception 'Inscrição com ID % não encontrada', p_id_inscricao;
+	end if;
+	
+	if status_atual = 'Cancelada' then
+		raise notice 'A inscriçao % já se encontra cancelada', p_id_inscricao;
+	return;
+	end if;
+	
+	update inscricao
+	set status = 'Cancelada'
+	where id_inscricao 	= p_id_inscricao;
+	
+	update pago 
+	set comprovante = 'Cancelado_pelo_usuario' || to_char(current_date, 'YYYYMMDD')
+	where id_pagamento in (select id_pagamento from pagamento where id_inscricao = cancelar_inscricao.p_id_inscricao);
+	
+	raise notice 'Inscrição % cancelada com sucesso. A vaga está liberada', p_id_inscricao;
+end;
+$$;

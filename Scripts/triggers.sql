@@ -20,11 +20,6 @@ FOR EACH ROW
 EXECUTE FUNCTION fn_verificar_capacidade_atividade();
 
 
-CREATE TRIGGER trg_validar_datas_evento
-BEFORE INSERT OR UPDATE ON evento
-FOR EACH ROW
-EXECUTE FUNCTION fn_validar_datas_evento();
-
 create or replace function evitar_choque_horario()
 returns trigger as $$
 declare 

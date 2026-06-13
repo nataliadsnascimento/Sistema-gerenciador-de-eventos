@@ -75,3 +75,32 @@ BEGIN
     RAISE NOTICE 'Pagamento ID % registrado e Inscrição % confirmada com sucesso!', v_id_pagamento, p_id_inscricao;
 END;
 $$;
+
+create or replace procedure cadastrar_palestrante(
+	palestrante_nome varchar(50),
+	palestrante_sobrenome varchar(50),
+	palestrante_email varchar(100),
+	palestrante_senha varchar(255),
+	palestrante_curriculo_lattes varchar(255),
+	palestrante_instituicao varchar(100),
+	palestrante_biografia text
+)
+language plpgsql as $$
+declare
+	v_id_usuario int;
+begin
+	insert into usuario (nome, sobrenome, email, senha, tipo_usuario)
+	values (palestrante_nome, palestrante_sobrenome, palestrante_email, palestrante_senha, 'Palestrante')
+	returning id_usuario into v_id_usuario;
+
+	insert into palestrante (id_usuario, curriculo_lattes, instituicao, biografia)
+	values (v_id_usuario, palestrante_curriculo_lattes, palestrante_instituicao, palestrante_biografia);
+	
+	raise notice 'Palestrante % % cadastrado com sucesso! (ID: %)', palestrante_nome, palestrante_sobrenome,v_id_usuario;
+exception
+	when unique_violation then
+		raise exception 'Erro, o email % já está cadastrado no sistema', palestrante_email;
+	when others then
+		raise exception 'Erro inesperado ao cadastrar palestrante: %', sqlerrm;
+end;
+$$;

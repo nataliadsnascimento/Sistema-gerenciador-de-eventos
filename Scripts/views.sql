@@ -65,3 +65,18 @@ from usuario
 left join organizador on usuario.id_usuario = organizador.id_usuario
 left join participante on usuario.id_usuario = participante.id_usuario
 left join palestrante on usuario.id_usuario = palestrante.id_usuario
+
+create or replace view engajamento_usuarios as
+select
+	usuario.id_usuario,
+	usuario.nome || ' ' || usuario.sobrenome as nome_completo,
+	usuario.email,
+	count(distinct inscricao.id_inscricao) as total_inscricoes,
+	count(distinct case when presenca.status = 'Presente' then presenca.id_presenca end) as total_presenca,
+	count(distinct certificado.id_certificado) as certificados_emitidos
+from usuario
+left join inscricao on usuario.id_usuario = inscricao.id_usuario
+left join presenca on inscricao.id_inscricao = presenca.id_inscricao
+left join certificado on presenca.id_presenca = certificado.id_presenca
+group by usuario.id_usuario, usuario.nome, usuario.sobrenome, usuario.email;
+

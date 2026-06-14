@@ -10,7 +10,7 @@ import lombok.Data;
 public class Local {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id_local")
     private Integer idLocal;
 
     @Column(name = "nome_bloco", nullable = false, length = 100)

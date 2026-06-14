@@ -75,3 +75,88 @@ BEGIN
     RAISE NOTICE 'Pagamento ID % registrado e Inscrição % confirmada com sucesso!', v_id_pagamento, p_id_inscricao;
 END;
 $$;
+
+create or replace procedure cadastrar_palestrante(
+	palestrante_nome varchar(50),
+	palestrante_sobrenome varchar(50),
+	palestrante_email varchar(100),
+	palestrante_senha varchar(255),
+	palestrante_curriculo_lattes varchar(255),
+	palestrante_instituicao varchar(100),
+	palestrante_biografia text
+)
+language plpgsql as $$
+declare
+	v_id_usuario int;
+begin
+	insert into usuario (nome, sobrenome, email, senha, tipo_usuario)
+	values (palestrante_nome, palestrante_sobrenome, palestrante_email, palestrante_senha, 'Palestrante')
+	returning id_usuario into v_id_usuario;
+
+	insert into palestrante (id_usuario, curriculo_lattes, instituicao, biografia)
+	values (v_id_usuario, palestrante_curriculo_lattes, palestrante_instituicao, palestrante_biografia);
+	
+	raise notice 'Palestrante % % cadastrado com sucesso! (ID: %)', palestrante_nome, palestrante_sobrenome,v_id_usuario;
+exception
+	when unique_violation then
+		raise exception 'Erro, o email % já está cadastrado no sistema', palestrante_email;
+	when others then
+		raise exception 'Erro inesperado ao cadastrar palestrante: %', sqlerrm;
+end;
+$$;
+
+create or replace procedure cancelar_inscricao(
+	p_id_inscricao int
+)
+language plpgsql as $$ 
+declare 
+	status_atual varchar(50);
+begin
+	select status into status_atual from inscricao where id_inscricao = p_id_inscricao;
+	
+	if not found then 
+		raise exception 'Inscrição com ID % não encontrada', p_id_inscricao;
+	end if;
+	
+	if status_atual = 'Cancelada' then
+		raise notice 'A inscriçao % já se encontra cancelada', p_id_inscricao;
+	return;
+	end if;
+	
+	update inscricao
+	set status = 'Cancelada'
+	where id_inscricao 	= p_id_inscricao;
+	
+	update pago 
+	set comprovante = 'Cancelado_pelo_usuario' || to_char(current_date, 'YYYYMMDD')
+	where id_pagamento in (select id_pagamento from pagamento where id_inscricao = cancelar_inscricao.p_id_inscricao);
+	
+	raise notice 'Inscrição % cancelada com sucesso. A vaga está liberada', p_id_inscricao;
+end;
+$$;
+
+create or replace procedure encerrar_inscricoes_evento(
+	p_id_evento int
+)
+language plpgsql as $$ 
+declare
+	vagas_canceladas int;
+begin
+	update evento
+	set status_evento = 'Inscrições encerradas'
+	where id_evento = encerrar_inscricoes_evento.p_id_evento;
+	
+	if not found then
+		raise exception 'Evento com ID % não encontrado', p_id_evento;
+	end if;
+	
+	update inscricao 
+	set status = 'Cancelada'
+	where status = 'Pendente'
+		and id_atividade in (select id_atividade from atividade where id_evento = encerrar_inscricoes_evento.p_id_evento);
+	
+	get diagnostics vagas_canceladas = row_count;
+	
+	raise notice 'Inscrições do evento % encerradas. Total de % inscrições pendentes que foram canceladas', p_id_evento, vagas_canceladas;
+end;
+$$;

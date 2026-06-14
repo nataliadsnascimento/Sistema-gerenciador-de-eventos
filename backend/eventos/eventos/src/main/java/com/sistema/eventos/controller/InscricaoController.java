@@ -33,7 +33,7 @@ public class InscricaoController {
     }
 
     @PutMapping("/pagamento")
-    public ResponseEntity<String> confirmarPagamento(ConfirmacaPagamentoDTO dto) {
+    public ResponseEntity<String> confirmarPagamento(@RequestBody ConfirmacaPagamentoDTO dto) {
         try {
             inscricaoRepository.confirmarPagamento(
                     dto.getIdInscricao(),

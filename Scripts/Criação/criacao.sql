@@ -45,19 +45,48 @@ CREATE TABLE IF NOT EXISTS categoria_evento(
     cor VARCHAR(20)
 );
 
+CREATE TABLE IF NOT EXISTS local( 
+    id_local SERIAL PRIMARY KEY,
+    nome_bloco VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS sala(
+    id_local INT PRIMARY KEY, 
+    capacidade INT NOT NULL,
+    recursos TEXT NOT NULL,
+    FOREIGN KEY (id_local) REFERENCES local(id_local) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS auditorio(
+    id_local INT PRIMARY KEY, 
+    possui_palco BOOL NOT NULL DEFAULT TRUE,
+    quantidade_assento INT NOT NULL,
+    acessibilidade TEXT NOT NULL,
+    FOREIGN KEY (id_local) REFERENCES local(id_local) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS laboratorio (
+    id_local INT PRIMARY KEY, 
+    nome_laboratorio VARCHAR(100) NOT NULL,
+    sistema_op VARCHAR (50),
+    quantidade_computadores INT,
+    FOREIGN KEY (id_local) REFERENCES local(id_local) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS evento(
     id_evento SERIAL PRIMARY KEY,
     titulo_evento VARCHAR(100),
     descricao TEXT,
     data_inicio TIMESTAMPTZ NOT NULL,
-    data_fim TIMESTAMP NOT NULL,
-    local VARCHAR(100),
+    data_fim TIMESTAMPTZ NOT NULL,
     carga_horaria_evento INT NOT NULL,
     vagas_totais INT NOT NULL,
     status_evento VARCHAR(100),
-    data_criacao INT NOT NULL,
+    data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     id_categoria INT NOT NULL,
-    FOREIGN KEY (id_categoria) REFERENCES categoria_evento(id_categoria) 
+    id_local INT,
+    FOREIGN KEY (id_categoria) REFERENCES categoria_evento(id_categoria),
+    FOREIGN KEY (id_local) REFERENCES local(id_local)
 );
 
 CREATE TABLE IF NOT EXISTS atividade (
@@ -67,11 +96,12 @@ CREATE TABLE IF NOT EXISTS atividade (
     data DATE NOT NULL,
     hora_inicio TIME NOT NULL,
     hora_fim TIME NOT NULL,
-    local VARCHAR(100),
     capacidade INT NOT NULL,
     carga_horaria INT NOT NULL,
     id_evento INT NOT NULL,
-    FOREIGN KEY (id_evento) REFERENCES evento(id_evento) ON DELETE CASCADE
+    id_local INT,
+    FOREIGN KEY (id_evento) REFERENCES evento(id_evento) ON DELETE CASCADE,
+    FOREIGN KEY (id_local) REFERENCES local(id_local)
 );  
 
 CREATE TABLE IF NOT EXISTS inscricao (
@@ -124,7 +154,7 @@ CREATE TABLE IF NOT EXISTS patrocinador(
 
 CREATE TABLE IF NOT EXISTS evento_patrocinador(
     tipo_cota VARCHAR(100),
-    valor_cota INT,
+    valor_cota DECIMAL(10,2),
     id_evento INT NOT NULL,
     id_patrocinador INT NOT NULL,
     PRIMARY KEY (id_evento, id_patrocinador),
@@ -133,60 +163,22 @@ CREATE TABLE IF NOT EXISTS evento_patrocinador(
 );
 
 CREATE TABLE IF NOT EXISTS palestra (
-    id_palestra SERIAL PRIMARY KEY,
-    titulo VARCHAR(150) NOT NULL,
-    data_palestra DATE NOT NULL,
-    hora_inicio TIME NOT NULL,
-    hora_fim TIME NOT NULL,
-    carga_horaria INT NOT NULL,
-    id_atividade INT NOT NULL,
+    id_atividade INT PRIMARY KEY,
     FOREIGN KEY (id_atividade) REFERENCES atividade(id_atividade) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS curso (
-    id_curso SERIAL PRIMARY KEY,
-    nome_curso VARCHAR(150) NOT NULL,
-    descricao TEXT,
-    id_atividade INT NOT NULL,
+    id_atividade INT PRIMARY KEY,
     FOREIGN KEY (id_atividade) REFERENCES atividade(id_atividade) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS local( 
-    id_local SERIAL PRIMARY KEY,
-    nome_bloco VARCHAR(100) NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS sala(
-    id_local INT PRIMARY KEY, 
-    capacidade INT NOT NULL,
-    recursos TEXT NOT NULL,
-    FOREIGN KEY (id_local) REFERENCES local(id_local) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS auditorio(
-    id_local INT PRIMARY KEY, 
-    possui_palco BOOL NOT NULL DEFAULT TRUE,
-    quantidade_assento INT NOT NULL,
-    acessibilidade TEXT NOT NULL,
-    FOREIGN KEY (id_local) REFERENCES local(id_local) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS laboratorio (
-    id_local INT PRIMARY KEY, 
-    nome_laboratorio VARCHAR(100) NOT NULL,
-    sistema_op VARCHAR (50),
-    quantidade_computadores INT,
-    FOREIGN KEY (id_local) REFERENCES local(id_local) ON DELETE CASCADE
-);
 
 CREATE TABLE IF NOT EXISTS presenca (
     id_presenca SERIAL PRIMARY KEY,
     data_registro DATE NOT NULL,
     status VARCHAR(50) NOT NULL,
     id_inscricao INT NOT NULL,
-    id_atividade INT NOT NULL,
-    FOREIGN KEY (id_inscricao) REFERENCES inscricao(id_inscricao) ON DELETE CASCADE,
-    FOREIGN KEY (id_atividade) REFERENCES atividade(id_atividade) ON DELETE CASCADE
+    FOREIGN KEY (id_inscricao) REFERENCES inscricao(id_inscricao) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS certificado (
@@ -206,6 +198,6 @@ CREATE TABLE IF NOT EXISTS arquivo (
     data_upload DATE NOT NULL,
     id_palestra INT,
     id_curso INT,
-    FOREIGN KEY (id_palestra) REFERENCES palestra(id_palestra) ON DELETE CASCADE,
-    FOREIGN KEY (id_curso) REFERENCES curso(id_curso) ON DELETE CASCADE
+    FOREIGN KEY (id_palestra) REFERENCES palestra(id_atividade) ON DELETE CASCADE,
+    FOREIGN KEY (id_curso) REFERENCES curso(id_atividade) ON DELETE CASCADE
 );

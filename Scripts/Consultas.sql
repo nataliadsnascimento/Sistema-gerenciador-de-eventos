@@ -23,8 +23,8 @@ ORDER BY inscritos_confirmados DESC;
 
 SELECT  
     e.titulo_evento AS evento,
-    COUNT(p.id_pagamento) AS quantidade_vendas,
-    SUM(pg.valor) AS faturamento_total
+    COUNT(DISTINCT p.id_pagamento) AS quantidade_vendas,
+    SUM(DISTINCT pg.valor) AS faturamento_total
 FROM evento e
 JOIN atividade a ON e.id_evento = a.id_evento
 JOIN inscricao i ON a.id_atividade = i.id_atividade
@@ -67,7 +67,7 @@ FROM certificado c
 JOIN presenca p ON c.id_presenca = p.id_presenca
 JOIN inscricao i ON p.id_inscricao = i.id_inscricao
 JOIN usuario u ON i.id_usuario = u.id_usuario
-JOIN atividade a ON p.id_atividade = a.id_atividade
+JOIN atividade a ON i.id_atividade = a.id_atividade
 WHERE p.status = 'Presente';
 
 SELECT 
@@ -77,7 +77,8 @@ SELECT
     COUNT(CASE WHEN p.status = 'Ausente' THEN 1 END) AS faltas,
     ROUND((COUNT(CASE WHEN p.status = 'Presente' THEN 1 END) * 100.0) / COUNT(p.id_presenca), 2) || '%' AS taxa_comparecimento
 FROM atividade a
-JOIN presenca p ON a.id_atividade = p.id_atividade
+JOIN inscricao i ON a.id_atividade = i.id_atividade
+JOIN presenca p ON i.id_inscricao = p.id_inscricao
 GROUP BY a.id_atividade, a.nome_atividade
 ORDER BY total_inscritos DESC;
 

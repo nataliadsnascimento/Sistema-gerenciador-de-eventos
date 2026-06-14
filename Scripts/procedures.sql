@@ -14,9 +14,9 @@ BEGIN
     VALUES (v_id_usuario, p_matricula, p_instituicao);
 
     INSERT INTO inscricao (data_inscricao, status, id_usuario, id_atividade)
-    VALUES (CURRENT_DATE, 'Confirmada', v_id_usuario, p_id_atividade);
+    VALUES (CURRENT_DATE, 'Pendente', v_id_usuario, p_id_atividade);
     
-    RAISE NOTICE 'Usuário % cadastrado e inscrito com sucesso!', p_nome;
+    RAISE NOTICE 'Usuário % cadastrado e inscrição pendente realizada com sucesso!', p_nome;
 END;
 $$;
 
@@ -128,8 +128,8 @@ begin
 	where id_inscricao 	= p_id_inscricao;
 	
 	update pago 
-	set comprovante = 'Cancelado_pelo_usuario' || to_char(current_date, 'YYYYMMDD')
-	where id_pagamento in (select id_pagamento from pagamento where id_inscricao = cancelar_inscricao.p_id_inscricao);
+	set comprovante = 'Cancelado_pelo_usuario_' || to_char(current_date, 'YYYYMMDD')
+	where id_pagamento in (select id_pagamento from pagamento where id_inscricao = p_id_inscricao);
 	
 	raise notice 'Inscrição % cancelada com sucesso. A vaga está liberada', p_id_inscricao;
 end;
@@ -144,7 +144,7 @@ declare
 begin
 	update evento
 	set status_evento = 'Inscrições encerradas'
-	where id_evento = encerrar_inscricoes_evento.p_id_evento;
+	where id_evento = p_id_evento;
 	
 	if not found then
 		raise exception 'Evento com ID % não encontrado', p_id_evento;
@@ -153,7 +153,7 @@ begin
 	update inscricao 
 	set status = 'Cancelada'
 	where status = 'Pendente'
-		and id_atividade in (select id_atividade from atividade where id_evento = encerrar_inscricoes_evento.p_id_evento);
+		and id_atividade in (select act.id_atividade from atividade act where act.id_evento = p_id_evento);
 	
 	get diagnostics vagas_canceladas = row_count;
 	
